@@ -9,9 +9,12 @@ import torch.optim as optim
 from torch.autograd import Variable
 
 import dataset
-import model
 
 from IPython import embed
+
+from imagenet import alexnet
+
+
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR-X Example')
 parser.add_argument('--type', default='cifar10', help='cifar10|cifar100')
@@ -53,10 +56,10 @@ if args.cuda:
 assert args.type in ['cifar10', 'cifar100'], args.type
 if args.type == 'cifar10':
     train_loader, test_loader = dataset.get10(batch_size=args.batch_size, num_workers=1)
-    model = model.cifar10(n_channel=args.channel)
+    model = alexnet.alexnet(100, model_root='log')
 else:
     train_loader, test_loader = dataset.get100(batch_size=args.batch_size, num_workers=1)
-    model = model.cifar100(n_channel=args.channel)
+    model = alexnet.alexnet(100, model_root='log')
 model = torch.nn.DataParallel(model, device_ids= range(args.ngpu))
 if args.cuda:
     model.cuda()
@@ -129,5 +132,3 @@ except Exception as e:
     traceback.print_exc()
 finally:
     print("Total Elapse: {:.2f}, Best Result: {:.3f}%".format(time.time()-t_begin, best_acc))
-
-
